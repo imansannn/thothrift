@@ -53,8 +53,6 @@
 
             //Restore orignal HTML
             document.body.innerHTML = oldPage;
-
-
         }
 		</script>
 </head>
@@ -78,104 +76,14 @@
 
 	<br>
 
-
-		<div id="add" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:400px;">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-				<h3 id="myModalLabel">Add Product...</h3>
-			</div>
-				<div class="modal-body">
-					<form method="post" enctype="multipart/form-data">
-					<center>
-						<table>
-							<tr>
-								<td><input type="file" name="product_image" required></td>
-							</tr>
-							<?php include("random_id.php");
-							echo '<tr>
-								<td><input type="hidden" name="product_code" value="'.$code.'" required></td>
-							<tr/>';
-							?>
-							<tr>
-								<td><input type="text" name="product_name" placeholder="Product Name" style="width:250px;" required></td>
-							<tr/>
-							<tr>
-								<td><input type="text" name="product_price" placeholder="Price" style="width:250px;" required></td>
-							</tr>
-							<tr>
-								<td><input type="text" name="product_size" placeholder="Size" style="width:250px;" maxLength="2" required></td>
-							</tr>
-							<tr>
-								<td><input type="text" name="brand" placeholder="Brand Name	" style="width:250px;" required></td>
-							</tr>
-							<tr>
-								<td><input type="number" name="qty" placeholder="No. of Stock" style="width:250px;" required></td>
-							</tr>
-							<tr>
-								<td><input type="hidden" name="category" value="bottom"></td>
-							</tr>
-						</table>
-					</center>
-				</div>
-			<div class="modal-footer">
-				<input class="btn btn-primary" type="submit" name="add" value="Add">
-				<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Close</button>
-					</form>
-			</div>
-		</div>
-
-		<?php
-			if (isset($_POST['add']))
-				{
-					$product_code = $_POST['product_code'];
-					$product_name = $_POST['product_name'];
-					$product_price = $_POST['product_price'];
-					$product_size = $_POST['product_size'];
-					$brand = $_POST['brand'];
-					$category = $_POST['category'];
-					$qty = $_POST['qty'];
-					$code = uniqid();
-
-								$name = $code.$_FILES["product_image"] ["name"];
-								$type = $_FILES["product_image"] ["type"];
-								$size = $_FILES["product_image"] ["size"];
-								$temp = $_FILES["product_image"] ["tmp_name"];
-								$error = $_FILES["product_image"] ["error"];
-
-								if ($error > 0){
-									die("Error uploading file! Code $error.");}
-								else
-								{
-									if($size > 30000000000) //conditions for the file
-									{
-										die("Format is not allowed or file size is too big!");
-									}
-									else
-									{
-										move_uploaded_file($temp,"../photo/".$name);
-
-
-				$q1 = $conn->query("INSERT INTO product ( product_id,product_name, product_price, product_size, product_image, brand, category)
-				VALUES ('$product_code','$product_name','$product_price','$product_size','$name', '$brand', '$category')");
-
-				$q2 = $conn->query("INSERT INTO stock ( product_id, qty) VALUES ('$product_code','$qty')");
-
-				header ("location:admin_bottom.php");
-			}}
-		}
-
-				?>
-
 	<div id="leftnav">
 		<ul>
-			
-		<li><a href="#">Products</a>
+			<li><a href="#">Products</a>
 				<ul>
-					<li><a href="admin_feature.php "style="font-size:15px; margin-left:15px;">Featured</a></li>
-					<li><a href="admin_top.php "style="font-size:15px; margin-left:15px;">Top</a></li>
-					<li><a href="admin_bottom.php "style="font-size:15px; margin-left:15px;">Bottom</a></li>
+					<li><a href="admin_feature.php" style="font-size:15px; margin-left:15px;">Featured</a></li>
+					<li><a href="admin_top.php" style="font-size:15px; margin-left:15px;">Top</a></li>
+					<li><a href="admin_bottom.php" style="font-size:15px; margin-left:15px;">Bottom</a></li>
 					<li><a href="admin_cap.php" style="font-size:15px; margin-left:15px;">Cap</a></li>
-					
 				</ul>
 			</li>
 			<li><a href="transaction.php">Transactions</a></li>
@@ -186,63 +94,81 @@
 	</div>
 
 	<div id="rightcontent" style="position:absolute; top:10%;">
-			<div class="alert alert-info"><center><h2>Transactions	</h2></center></div>
-			<br />
+		<div class="alert alert-info"><center><h2>Transactions</h2></center></div>
+		<br />
 
+		<div class="alert alert-info">
+			<form method="post" class="well" style="background-color:#fff; overflow:hidden;">
+				<div id="printablediv">
+					<center>
+						<table class="table" style="width:50%;">
+							<label style="font-size:25px;">THO THRIFT Inc.</label>
+							<label style="font-size:20px;">Official Receipt</label>
+							<tr>
+								<th><h5>Quantity</h5></th>
+								<th><h5>Product Name</h5></th>
+								<th><h5>Size</h5></th>
+								<th><h5>Price</h5></th>
+							</tr>
 
-			<div class="alert alert-info">
-			<form method="post" class="well"  style="background-color:#fff; overflow:hidden;">
-	<div id="printablediv">
-	<center>
-	<table class="table" style="width:50%;">
-	<label style="font-size:25px;">THO THRIFT Inc.</label>
-	<label style="font-size:20px;">Official Receipt</label>
-		<tr>
-			<th><h5>Quantity</h5></td>
-			<th><h5>Product Name</h5></td>
-			<th><h5>Size</h5></td>
-			<th><h5>Price</h5></td>
-		</tr>
+							<?php
+								$t_id = $_GET['tid'];
+								$query = $conn->query("SELECT * FROM transaction WHERE transaction_id = '$t_id'") or die (mysqli_error());
+								$fetch = $query->fetch_array();
 
-		<?php
-		$t_id = $_GET['tid'];
-		$query = $conn->query("SELECT * FROM transaction WHERE transaction_id = '$t_id'") or die (mysqli_error());
-		$fetch = $query->fetch_array();
+								$amnt = $fetch['amount'];
+								echo "Date : ". $fetch['order_date']."";
 
-		$amnt = $fetch['amount'];
-		echo "Date : ". $fetch['order_date']."";
+								$query2 = $conn->query("SELECT * FROM transaction_detail LEFT JOIN product ON product.product_id = transaction_detail.product_id WHERE transaction_detail.transaction_id = '$t_id'") or die (mysqli_error());
+								while($row = $query2->fetch_array()){
 
-		$query2 = $conn->query("SELECT * FROM transaction_detail LEFT JOIN product ON product.product_id = transaction_detail.product_id WHERE transaction_detail.transaction_id = '$t_id'") or die (mysqli_error());
-		while($row = $query2->fetch_array()){
+								$pname = $row['product_name'];
+								$psize = $row['product_size'];
+								$pprice = $row['product_price'];
+								$oqty = $row['order_qty'];
 
-		$pname = $row['product_name'];
-		$psize = $row['product_size'];
-		$pprice = $row['product_price'];
-		$oqty = $row['order_qty'];
+								echo "<tr>";
+								echo "<td>".$oqty."</td>";
+								echo "<td>".$pname."</td>";
+								echo "<td>".$psize."</td>";
+								echo "<td>".$pprice."</td>";
+								echo "</tr>";
+								}
+							?>
 
-		echo "<tr>";
-		echo "<td>".$oqty."</td>";
-		echo "<td>".$pname."</td>";
-		echo "<td>".$psize."</td>";
-		echo "<td>".$pprice."</td>";
-		echo "</tr>";
-		}
-		?>
+						</table>
+						<legend></legend>
+						<h4>Customer Details</h4>
+						<?php
+							$customer_id = $fetch['customerid'];
+							$customer_query = $conn->query("SELECT * FROM customer WHERE customerid = '$customer_id'") or die (mysqli_error());
+							$customer = $customer_query->fetch_array();
 
-	</table>
-	<legend></legend>
-	<h4>TOTAL: RM <?php echo $amnt; ?></h4>
-	</center>
+							$firstname = $customer['firstname'];
+							$lastname = $customer['lastname'];
+							$address = $customer['address'];
+							$country = $customer['country'];
+							$zipcode = $customer['zipcode'];
+							$mobile = $customer['mobile'];
+						?>
+
+						<p><strong>First Name:</strong> <?php echo htmlspecialchars($firstname, ENT_QUOTES, 'UTF-8'); ?></p>
+						<p><strong>Last Name:</strong> <?php echo htmlspecialchars($lastname, ENT_QUOTES, 'UTF-8'); ?></p>
+						<p><strong>Address:</strong> <?php echo htmlspecialchars($address, ENT_QUOTES, 'UTF-8'); ?></p>
+						<p><strong>Country:</strong> <?php echo htmlspecialchars($country, ENT_QUOTES, 'UTF-8'); ?></p>
+						<p><strong>Zipcode:</strong> <?php echo htmlspecialchars($zipcode, ENT_QUOTES, 'UTF-8'); ?></p>
+						<p><strong>Mobile:</strong> <?php echo htmlspecialchars($mobile, ENT_QUOTES, 'UTF-8'); ?></p>
+
+						<legend></legend>
+						<h4>TOTAL: RM <?php echo $amnt; ?></h4>
+					</center>
+				</div>
+
+				<div class='pull-right'>
+					<div class="add"><a onclick="javascript:printDiv('printablediv')" name="print" style="cursor:pointer;" class="btn btn-info"><i class="icon-white icon-print"></i> Print Receipt</a></div>
+				</div>
+			</form>
+		</div>
 	</div>
-
-	<div class='pull-right'>
-	<div class="add"><a onclick="javascript:printDiv('printablediv')" name="print" style="cursor:pointer;" class="btn btn-info"><i class="icon-white icon-print"></i> Print Receipt</a></div>
-	</div>
-	</form>
-			</div>
-			</div>
-
-
-
 </body>
 </html>
