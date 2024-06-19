@@ -66,7 +66,7 @@
 	<div id="rightcontent" style="position:absolute; top:10%;">
 			<div class="alert alert-info"><center><h2>Messages</h2></center></div>
 			<br />
-				<label  style="padding:5px; float:right;"><input type="text" name="filter" placeholder="Search here..." id="filter"></label>
+				<label  style="padding:5px; float:right;"><input type="text" name="filter" placeholder="Search Message Here..." id="filter"></label>
 			<br />
 
 		<div class="alert alert-info">

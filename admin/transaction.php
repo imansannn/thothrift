@@ -1,286 +1,196 @@
 <?php
-	include("../function/session.php");
-	include("../db/dbconn.php");
+    include("../function/session.php");
+    include("../db/dbconn.php");
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title>THO THRIFT</title>
-	<link rel = "stylesheet" type = "text/css" href="../css/style.css" media="all">
-	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
-	<script src="../js/bootstrap.js"></script>
-	<script src="../js/jquery-1.7.2.min.js"></script>
-	<script src="../js/carousel.js"></script>
-	<script src="../js/button.js"></script>
-	<script src="../js/dropdown.js"></script>
-	<script src="../js/tab.js"></script>
-	<script src="../js/tooltip.js"></script>
-	<script src="../js/popover.js"></script>
-	<script src="../js/collapse.js"></script>
-	<script src="../js/modal.js"></script>
-	<script src="../js/scrollspy.js"></script>
-	<script src="../js/alert.js"></script>
-	<script src="../js/transition.js"></script>
-	<script src="../js/bootstrap.min.js"></script>
-	<script src="../javascripts/filter.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../jscript/jquery-1.9.1.js" type="text/javascript"></script>
-
-		<!--Le Facebox-->
-		<link href="../facefiles/facebox.css" media="screen" rel="stylesheet" type="text/css" />
-		<script src="../facefiles/jquery-1.9.js" type="text/javascript"></script>
-		<script src="../facefiles/jquery-1.2.2.pack.js" type="text/javascript"></script>
-		<script src="../facefiles/facebox.js" type="text/javascript"></script>
-		<script type="text/javascript">
-		jQuery(document).ready(function($) {
-		$('a[rel*=facebox]').facebox()
-		})
-		</script>
+    <title>THO THRIFT</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/jquery-1.7.2.min.js"></script>
+    <script src="../js/carousel.js"></script>
+    <script src="../js/button.js"></script>
+    <script src="../js/dropdown.js"></script>
+    <script src="../js/tab.js"></script>
+    <script src="../js/tooltip.js"></script>
+    <script src="../js/popover.js"></script>
+    <script src="../js/collapse.js"></script>
+    <script src="../js/modal.js"></script>
+    <script src="../js/scrollspy.js"></script>
+    <script src="../js/alert.js"></script>
+    <script src="../js/transition.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../javascripts/filter.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../jscript/jquery-1.9.1.js" type="text/javascript"></script>
+    <link href="../facefiles/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="../facefiles/jquery-1.9.js" type="text/javascript"></script>
+    <script src="../facefiles/jquery-1.2.2.pack.js" type="text/javascript"></script>
+    <script src="../facefiles/facebox.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('a[rel*=facebox]').facebox()
+        })
+    </script>
 </head>
 <body>
-	<div id="header" style="position:fixed;">
-		<img src="../img/logo.jpg">
-		<label>THO THRIFT</label>
+    <div id="header" style="position:fixed;">
+        <img src="../img/logo.jpg">
+        <label>THO THRIFT</label>
 
-			<?php
-				$id = (int) $_SESSION['id'];
+        <?php
+            $id = (int) $_SESSION['id'];
 
-					$query = $conn->query ("SELECT * FROM admin WHERE adminid = '$id' ") or die (mysqli_error());
-					$fetch = $query->fetch_array ();
-			?>
+            $stmt = $conn->prepare("SELECT * FROM admin WHERE adminid = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $fetch = $result->fetch_array();
+        ?>
 
-			<ul>
-				<li><a href="../function/admin_logout.php"><i class="icon-off icon-white"></i>logout</a></li>
-				<li>Welcome:&nbsp;&nbsp;&nbsp;<i class="icon-user icon-white"></i><?php echo $fetch['username']; ?></a></li>
-			</ul>
-	</div>
+        <ul>
+            <li><a href="../function/admin_logout.php"><i class="icon-off icon-white"></i>logout</a></li>
+            <li>Welcome:&nbsp;&nbsp;&nbsp;<i class="icon-user icon-white"></i><?php echo htmlspecialchars($fetch['username'], ENT_QUOTES, 'UTF-8'); ?></li>
+        </ul>
+    </div>
 
-	<br>
+    <br>
 
+    <div id="leftnav">
+        <ul>
+            <li><a href="#">Products</a>
+                <ul>
+                    <li><a href="admin_feature.php" style="font-size:15px; margin-left:15px;">Featured</a></li>
+                    <li><a href="admin_top.php" style="font-size:15px; margin-left:15px;">Top</a></li>
+                    <li><a href="admin_bottom.php" style="font-size:15px; margin-left:15px;">Bottom</a></li>
+                    <li><a href="admin_cap.php" style="font-size:15px; margin-left:15px;">Cap</a></li>
+                </ul>
+            </li>
+            <li><a href="transaction.php">Transactions</a></li>
+            <li><a href="customer.php">Customers</a></li>
+            <li><a href="message.php">Messages</a></li>
+            <li><a href="order.php">Orders</a></li>
+        </ul>
+    </div>
 
-		<div id="add" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:400px;">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-				<h3 id="myModalLabel">Add Product...</h3>
-			</div>
-				<div class="modal-body">
-					<form method="post" enctype="multipart/form-data">
-					<center>
-						<table>
-							<tr>
-								<td><input type="file" name="product_image" required></td>
-							</tr>
-							<?php include("random_id.php");
-							echo '<tr>
-								<td><input type="hidden" name="product_code" value="'.$code.'" required></td>
-							<tr/>';
-							?>
-							<tr>
-								<td><input type="text" name="product_name" placeholder="Product Name" style="width:250px;" required></td>
-							<tr/>
-							<tr>
-								<td><input type="text" name="product_price" placeholder="Price" style="width:250px;" required></td>
-							</tr>
-							<tr>
-								<td><input type="text" name="product_size" placeholder="Size" style="width:250px;" maxLength="2" required></td>
-							</tr>
-							<tr>
-								<td><input type="text" name="brand" placeholder="Brand Name	" style="width:250px;" required></td>
-							</tr>
-							<tr>
-								<td><input type="number" name="qty" placeholder="No. of Stock" style="width:250px;" required></td>
-							</tr>
-							<tr>
-								<td><input type="hidden" name="category" value="bottom"></td>
-							</tr>
-						</table>
-					</center>
-				</div>
-			<div class="modal-footer">
-				<input class="btn btn-primary" type="submit" name="add" value="Add">
-				<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Close</button>
-					</form>
-			</div>
-		</div>
+    <div id="rightcontent" style="position:absolute; top:10%;">
+        <div class="alert alert-info"><center><h2>Transactions</h2></center></div>
+        <br />
+        <label style="padding:5px; float:right;"><input type="text" name="filter" placeholder="Search Transactions here..." id="filter"></label>
+        <br />
 
-		<?php
-			if (isset($_POST['add']))
-				{
-					$product_code = $_POST['product_code'];
-					$product_name = $_POST['product_name'];
-					$product_price = $_POST['product_price'];
-					$product_size = $_POST['product_size'];
-					$brand = $_POST['brand'];
-					$category = $_POST['category'];
-					$qty = $_POST['qty'];
-					$code = uniqid();
+        <div class="alert alert-info">
+            <table class="table table-hover" style="background-color:;">
+                <thead>
+                    <tr style="font-size:16px;">
+                        <th>ID</th>
+                        <th>DATE</th>
+                        <th>Customer Name</th>
+                        <th>Total Amount</th>
+                        <th>Order Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $query = $conn->query("SELECT * FROM transaction LEFT JOIN customer ON customer.customerid = transaction.customerid") or die(mysqli_error());
+                        while ($fetch = $query->fetch_array()) {
+                            $id = $fetch['transaction_id'];
+                            $amnt = $fetch['amount'];
+                            $o_stat = $fetch['order_stat'];
+                            $o_date = $fetch['order_date'];
+                            $name = htmlspecialchars($fetch['firstname'].' '.$fetch['lastname'], ENT_QUOTES, 'UTF-8');
+                    ?>
+                    <tr>
+                        <td><?php echo $id; ?></td>
+                        <td><?php echo $o_date; ?></td>
+                        <td><?php echo $name; ?></td>
+                        <td><?php echo $amnt; ?></td>
+                        <td><?php echo $o_stat; ?></td>
+                        <td> 
+                            <?php if ($o_stat == 'Confirmed' || $o_stat == 'Cancelled'){
+                                 ?> <a href="receipt.php?tid=<?php echo $id; ?>">View</a>
+                            <?php } else { ?> 
+                            <?php } ?>
+                            <?php if ($o_stat == 'Confirmed' || $o_stat == 'Cancelled') { ?>
+                            <?php } else { ?>
+                                <a class="btn btn-mini btn-info" href="confirm.php?id=<?php echo $id; ?>">Confirm</a>
+                                | <a class="btn btn-mini btn-danger" href="cancel.php?id=<?php echo $id; ?>">Cancel</a>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                    <?php
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-								$name = $code.$_FILES["product_image"] ["name"];
-								$type = $_FILES["product_image"] ["type"];
-								$size = $_FILES["product_image"] ["size"];
-								$temp = $_FILES["product_image"] ["tmp_name"];
-								$error = $_FILES["product_image"] ["error"];
+    <?php
+        /* Stock in */
+        if (isset($_POST['stockin'])) {
+            $pid = $_POST['pid'];
 
-								if ($error > 0){
-									die("Error uploading file! Code $error.");}
-								else
-								{
-									if($size > 30000000000) //conditions for the file
-									{
-										die("Format is not allowed or file size is too big!");
-									}
-									else
-									{
-										move_uploaded_file($temp,"../photo/".$name);
+            $stmt = $conn->prepare("SELECT * FROM stock WHERE product_id = ?");
+            $stmt->bind_param("s", $pid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_array();
 
+            $old_stck = $row['qty'];
+            $new_stck = $_POST['new_stck'];
+            $total = $old_stck + $new_stck;
 
-				$q1 = $conn->query("INSERT INTO product ( product_id,product_name, product_price, product_size, product_image, brand, category)
-				VALUES ('$product_code','$product_name','$product_price','$product_size','$name', '$brand', '$category')");
+            $stmt = $conn->prepare("UPDATE stock SET qty = ? WHERE product_id = ?");
+            $stmt->bind_param("is", $total, $pid);
+            $stmt->execute();
 
-				$q2 = $conn->query("INSERT INTO stock ( product_id, qty) VALUES ('$product_code','$qty')");
+            header("Location: admin_bottom.php");
+        }
 
-				header ("location:admin_bottom.php");
-			}}
-		}
+        /* Stock out */
+        if (isset($_POST['stockout'])) {
+            $pid = $_POST['pid'];
 
-				?>
+            $stmt = $conn->prepare("SELECT * FROM stock WHERE product_id = ?");
+            $stmt->bind_param("s", $pid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_array();
 
-	<div id="leftnav">
-		<ul>
-			
-		<li><a href="#">Products</a>
-				<ul>
-					<li><a href="admin_feature.php "style="font-size:15px; margin-left:15px;">Featured</a></li>
-					<li><a href="admin_top.php "style="font-size:15px; margin-left:15px;">Top</a></li>
-					<li><a href="admin_bottom.php "style="font-size:15px; margin-left:15px;">Bottom</a></li>
-					<li><a href="admin_cap.php" style="font-size:15px; margin-left:15px;">Cap</a></li>
-					
-				</ul>
-			</li>
-			<li><a href="transaction.php">Transactions</a></li>
-			<li><a href="customer.php">Customers</a></li>
-			<li><a href="message.php">Messages</a></li>
-			<li><a href="order.php">Orders</a></li>
-		</ul>
-	</div>
+            $old_stck = $row['qty'];
+            $new_stck = $_POST['new_stck'];
+            $total = $old_stck - $new_stck;
 
-	<div id="rightcontent" style="position:absolute; top:10%;">
-			<div class="alert alert-info"><center><h2>Transactions	</h2></center></div>
-			<br />
-				<label  style="padding:5px; float:right;"><input type="text" name="filter" placeholder="Search Transactions here..." id="filter"></label>
-			<br />
+            $stmt = $conn->prepare("UPDATE stock SET qty = ? WHERE product_id = ?");
+            $stmt->bind_param("is", $total, $pid);
+            $stmt->execute();
 
-			<div class="alert alert-info">
-			<table class="table table-hover" style="background-color:;">
-				<thead>
-				<tr style="font-size:16px;">
-					<th>ID</th>
-					<th>DATE</th>
-					<th>Customer Name</th>
-					<th>Total Amount</th>
-					<th>Order Status</th>
-					<th>Action</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
-
-					$query = $conn->query("SELECT * FROM transaction LEFT JOIN customer ON customer.customerid = transaction.customerid") or die(mysqli_error());
-					while($fetch = $query->fetch_array())
-						{
-						$id = $fetch['transaction_id'];
-						$amnt = $fetch['amount'];
-						$o_stat = $fetch['order_stat'];
-						$o_date = $fetch['order_date'];
-
-						$name = $fetch['firstname'].' '.$fetch['lastname'];
-				?>
-				<tr>
-					<td><?php echo $id; ?></td>
-					<td><?php echo $o_date; ?></td>
-					<td><?php echo $name; ?></td>
-					<td><?php echo $amnt; ?></td>
-					<td><?php echo $o_stat; ?></td>
-					<td><a href="receipt.php?tid=<?php echo $id; ?>">View</a>
-					<?php
-					if($o_stat == 'Confirmed'){
-
-					}elseif($o_stat == 'Cancelled'){
-
-					}else{
-					echo '| <a class="btn btn-mini btn-info" href="confirm.php?id='.$id.'">Confirm</a> ';
-					echo '| <a class="btn btn-mini btn-danger" href="cancel.php?id='.$id.'">Cancel</a></td>';
-					}
-					?>
-				</tr>
-				<?php
-					}
-				?>
-				</tbody>
-			</table>
-			</div>
-			</div>
-
-  <?php
-  /* stock in */
-  if(isset($_POST['stockin'])){
-
-  $pid = $_POST['pid'];
-
- $result = $conn->query("SELECT * FROM `stock` WHERE product_id='$pid'") or die(mysqli_error());
- $row = $result->fetch_array();
-
-  $old_stck = $row['qty'];
-  $new_stck = $_POST['new_stck'];
-  $total = $old_stck + $new_stck;
-
-  $que = $conn->query("UPDATE `stock` SET `qty` = '$total' WHERE `product_id`='$pid'") or die(mysqli_error());
-
-  header("Location:admin_bottom.php");
- }
-
-  /* stock out */
- if(isset($_POST['stockout'])){
-
-  $pid = $_POST['pid'];
-
- $result = $conn->query("SELECT * FROM `stock` WHERE product_id='$pid'") or die(mysqli_error());
- $row = $result->fetch_array();
-
-  $old_stck = $row['qty'];
-  $new_stck = $_POST['new_stck'];
-  $total = $old_stck - $new_stck;
-
-  $que = $conn->query("UPDATE `stock` SET `qty` = '$total' WHERE `product_id`='$pid'") or die(mysqli_error());
-
-  header("Location:admin_bottom.php");
- }
-  ?>
-
+            header("Location: admin_bottom.php");
+        }
+    ?>
 </body>
 </html>
 <script type="text/javascript">
-	$(document).ready( function() {
+    $(document).ready(function() {
+        $('.remove').click(function() {
+            var id = $(this).attr("id");
 
-		$('.remove').click( function() {
-
-		var id = $(this).attr("id");
-
-
-		if(confirm("Are you sure you want to delete this product?")){
-
-
-			$.ajax({
-			type: "POST",
-			url: "../function/remove.php",
-			data: ({id: id}),
-			cache: false,
-			success: function(html){
-			$(".del"+id).fadeOut(2000, function(){ $(this).remove();});
-			}
-			});
-			}else{
-			return false;}
-		});
-	});
-
+            if (confirm("Are you sure you want to delete this product?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "../function/remove.php",
+                    data: ({ id: id }),
+                    cache: false,
+                    success: function(html) {
+                        $(".del" + id).fadeOut(2000, function() { $(this).remove(); });
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+    });
 </script>
